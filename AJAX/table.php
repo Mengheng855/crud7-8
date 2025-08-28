@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <title>Document</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 </head>
 
 <body>
@@ -63,7 +64,7 @@
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
-                            <form action="" method="post" enctype="multipart/form-data">
+                            <form action="insert.php" id="form" method="post" enctype="multipart/form-data">
                                 <div class="form-group  my-2">
                                     <label for="">Username</label>
                                     <input type="text" name="username" id="username" class="form-control"
@@ -134,18 +135,65 @@
                                     <img id="image" src="https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg" alt="" width="200px" height="200px" style="border-radius: 50%; ">
                                     <input type="file" name="file" id="file">
                                 </div>
-
+                                 <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                    <button type="button" id="upload" class="btn btn-primary">Save changes</button>
+                                </div>
                             </form>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" class="btn btn-primary">Save changes</button>
-                        </div>
+                       
                     </div>
                 </div>
             </div>
         </table>
     </div>
 </body>
-
 </html>
+<script>
+    $(document).ready(function(){
+        $('#file').hide();
+        $('#image').click(function(){
+            $('#file').click();
+        })
+        $('#file').change(function(){
+            let file=this.files[0];
+            if(file){
+                let img=URL.createObjectURL(file);
+                $('#image').attr('src',img);
+            }
+        })
+        $('#upload').click(function(){
+            let file=$('#file')[0].files[0];
+            let username=$('#username').val();
+            let gender=$('#gender').val();
+            let email=$('#email').val();
+            let phone_number=$('#phone_number').val();
+            let position=$('#positon').val();
+            let salary=$('#salary').val();
+            let address=$('#address').val();
+            
+            let formdata= new FormData();
+            formdata.append('file',file);
+            formdata.append('username',username);
+            formdata.append('gender',gender);
+            formdata.append('email',email);
+            formdata.append('phone_number',phone_number);
+            formdata.append('position',position);
+            formdata.append('salary',salary);
+            formdata.append('address',address);
+            $.ajax({
+                url:'insert.php',
+                type:'POST',
+                data:formdata,
+                contentType:false,
+                processData:false,
+                success:function(response){
+                    $('#form')[0].reset();
+                    $('#image').attr('src','https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg')
+                    alert(response);
+                }
+            })
+        })
+
+    })
+</script>

@@ -6,7 +6,7 @@
 
    $conn=mysqli_connect($server,$name,$pass,$db);
    if($conn){
-    echo 123;
+   //  echo 123;
    }else{
       echo 'Try again..!';
    }
