@@ -1,3 +1,11 @@
+<?php
+    include 'conn.php';
+    $select="SELECT * FROM tbl_employee";
+    $ex=$conn->query($select);
+
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -14,7 +22,7 @@
 </head>
 
 <body>
-    <div class="container p-5 mt-5 shadow">
+    <div class="container-fluid p-5 mt-5 shadow">
         <div class="d-flex justify-content-end">
             <button type="button" class="btn btn-primary d-flex justify-content-end" data-bs-toggle="modal"
                 data-bs-target="#exampleModal">
@@ -32,24 +40,33 @@
                     <th>Positon</th>
                     <th>Salary</th>
                     <th>Address</th>
+                    <th>Profile</th>
                     <th>Action</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>001</td>
-                    <td>johnson</td>
-                    <td>Male</td>
-                    <td>john@gmail.com</td>
-                    <td>0976542</td>
-                    <td>Web frontend</td>
-                    <td>1200</td>
-                    <td>Phnom Penh</td>
-                    <td>
-                        <button class="btn btn-danger " type="button">Delete</button>
-                        <button class="btn btn-success " type="button">Edit</button>
-                    </td>
-                </tr>
+                <?php
+                 while($row=mysqli_fetch_assoc($ex)){
+                    echo '
+                      <tr>
+                        <td>'.$row['id'].'</td>
+                        <td>'.$row['username'].'</td>
+                        <td>'.$row['gender'].'</td>
+                        <td>'.$row['email'].'</td>
+                        <td>'.$row['phone_number'].'</td>
+                        <td>'.$row['position'].'</td>
+                        <td>'.$row['salary'].'</td>
+                        <td>'.$row['address'].'</td>
+                        <td><img src="image/'.$row['profile'].'" alt="" width="60px" height="60px"></td>
+                        
+                        <td>
+                            <button class="btn btn-danger " type="button">Delete</button>
+                            <button class="btn btn-success " type="button">Edit</button>
+                        </td>
+                    </tr>
+                    ';
+                 }
+                ?>
             </tbody>
             <!-- Button trigger modal -->
 
@@ -150,50 +167,69 @@
 </body>
 </html>
 <script>
-    $(document).ready(function(){
-        $('#file').hide();
-        $('#image').click(function(){
-            $('#file').click();
-        })
-        $('#file').change(function(){
-            let file=this.files[0];
-            if(file){
-                let img=URL.createObjectURL(file);
-                $('#image').attr('src',img);
+   $(document).ready(function(){
+      $('#file').hide(); 
+      $('#image').click(function(){
+        $('#file').click();
+      })
+      $('#file').change(function(){
+        let file=this.files[0];
+        if(file){
+            let img=URL.createObjectURL(file);
+            $('#image').attr('src',img);
+        }
+      })
+      $('#upload').click(function(){
+        let file=$('#file')[0].files[0];
+        let username=$('#username').val();
+        let gender=$('#gender').val();
+        let email=$('#email').val();
+        let phone_number=$('#phone_number').val();
+        let position=$('#position').val();
+        let salary=$('#salary').val();
+        let address=$('#address').val();
+
+        let formdata= new FormData();
+        formdata.append('file',file);
+        formdata.append('username',username);
+        formdata.append('gender',gender);
+        formdata.append('email',email);
+        formdata.append('phone_number',phone_number);
+        formdata.append('position',position);
+        formdata.append('salary',salary);
+        formdata.append('address',address);
+
+        $.ajax({
+            url:'insert.php',
+            type:'POST',
+            data:formdata,
+            contentType:false,
+            processData:false,
+            success:function(response){
+                const image=$('#image').attr('src');
+                $('tbody').append(`
+                <tr>
+                        <td>${response}</td>
+                        <td>${username}</td>
+                        <td>${gender}</td>
+                        <td>${email}</td>
+                        <td>${phone_number}</td>
+                        <td>${position}</td>
+                        <td>${salary}</td>
+                        <td>${address}</td>
+                        <td><img src="${image}" alt="" width="60px" height="60px"></td>
+                        
+                        <td>
+                            <button class="btn btn-danger " type="button">Delete</button>
+                            <button class="btn btn-success " type="button">Edit</button>
+                        </td>
+                    </tr>
+                  
+                `)
+                $('#form')[0].reset();
+                $('#image').attr('src','https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg')
             }
         })
-        $('#upload').click(function(){
-            let file=$('#file')[0].files[0];
-            let username=$('#username').val();
-            let gender=$('#gender').val();
-            let email=$('#email').val();
-            let phone_number=$('#phone_number').val();
-            let position=$('#positon').val();
-            let salary=$('#salary').val();
-            let address=$('#address').val();
-            
-            let formdata= new FormData();
-            formdata.append('file',file);
-            formdata.append('username',username);
-            formdata.append('gender',gender);
-            formdata.append('email',email);
-            formdata.append('phone_number',phone_number);
-            formdata.append('position',position);
-            formdata.append('salary',salary);
-            formdata.append('address',address);
-            $.ajax({
-                url:'insert.php',
-                type:'POST',
-                data:formdata,
-                contentType:false,
-                processData:false,
-                success:function(response){
-                    $('#form')[0].reset();
-                    $('#image').attr('src','https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg')
-                    alert(response);
-                }
-            })
-        })
-
-    })
+      })
+   })
 </script>
