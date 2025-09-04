@@ -2,8 +2,6 @@
     include 'conn.php';
     $select="SELECT * FROM tbl_employee";
     $ex=$conn->query($select);
-
-
 ?>
 
 <!DOCTYPE html>
@@ -60,7 +58,7 @@
                         <td><img src="image/'.$row['profile'].'" alt="" width="60px" height="60px"></td>
                         
                         <td>
-                            <button class="btn btn-danger " type="button">Delete</button>
+                            <button class="btn btn-danger " id="delete" type="button">Delete</button>
                             <button class="btn btn-success " type="button">Edit</button>
                         </td>
                     </tr>
@@ -220,16 +218,33 @@
                         <td><img src="${image}" alt="" width="60px" height="60px"></td>
                         
                         <td>
-                            <button class="btn btn-danger " type="button">Delete</button>
+                            <button class="btn btn-danger " id="delete" type="button">Delete</button>
                             <button class="btn btn-success " type="button">Edit</button>
                         </td>
                     </tr>
-                  
                 `)
                 $('#form')[0].reset();
                 $('#image').attr('src','https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg')
             }
         })
       })
+
+      $(document).on('click','#delete',function(){    
+         let row=$(this).closest('tr');
+         let id=row.find('td:first').text().trim();
+         $.ajax({
+            url:'delete.php',
+            type:'POST',
+            data:{
+                id
+            },
+            success:function(){  
+                row.remove();
+            }
+         })
+      })
+
+
+
    })
 </script>
