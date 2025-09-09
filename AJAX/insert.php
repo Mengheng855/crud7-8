@@ -20,7 +20,7 @@
 
      $select_id="SELECT id FROM tbl_employee ORDER BY id DESC LIMIT 1";
      $res=mysqli_query($conn,$select_id);
-    $id=mysqli_fetch_assoc($res)['id'];
+     $id=mysqli_fetch_assoc($res)['id'];
         echo $id;
      }   
   

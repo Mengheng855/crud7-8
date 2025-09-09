@@ -1,7 +1,7 @@
 <?php
-    include 'conn.php';
-    $select="SELECT * FROM tbl_employee";
-    $ex=$conn->query($select);
+include 'conn.php';
+$select = "SELECT * FROM tbl_employee";
+$ex = $conn->query($select);
 ?>
 
 <!DOCTYPE html>
@@ -22,8 +22,7 @@
 <body>
     <div class="container-fluid p-5 mt-5 shadow">
         <div class="d-flex justify-content-end">
-            <button type="button" class="btn btn-primary d-flex justify-content-end" data-bs-toggle="modal"
-                data-bs-target="#exampleModal">
+            <button type="button" id="add" class="btn btn-primary d-flex justify-content-end" data-bs-toggle="modal" data-bs-target="#exampleModal">
                 +Add Employee
             </button>
         </div>
@@ -44,26 +43,26 @@
             </thead>
             <tbody>
                 <?php
-                 while($row=mysqli_fetch_assoc($ex)){
+                while ($row = mysqli_fetch_assoc($ex)) {
                     echo '
                       <tr>
-                        <td>'.$row['id'].'</td>
-                        <td>'.$row['username'].'</td>
-                        <td>'.$row['gender'].'</td>
-                        <td>'.$row['email'].'</td>
-                        <td>'.$row['phone_number'].'</td>
-                        <td>'.$row['position'].'</td>
-                        <td>'.$row['salary'].'</td>
-                        <td>'.$row['address'].'</td>
-                        <td><img src="image/'.$row['profile'].'" alt="" width="60px" height="60px"></td>
+                        <td>' . $row['id'] . '</td>
+                        <td>' . $row['username'] . '</td>
+                        <td>' . $row['gender'] . '</td>
+                        <td>' . $row['email'] . '</td>
+                        <td>' . $row['phone_number'] . '</td>
+                        <td>' . $row['position'] . '</td>
+                        <td>' . $row['salary'] . '</td>
+                        <td>' . $row['address'] . '</td>
+                        <td><img src="image/' . $row['profile'] . '" alt="" width="60px" height="60px"></td>
                         
                         <td>
-                            <button class="btn btn-danger " id="delete" type="button">Delete</button>
-                            <button class="btn btn-success " type="button">Edit</button>
+                            <button class="btn btn-danger delete"  type="button">Delete</button>
+                            <button class="btn btn-success edit" data-bs-toggle="modal"data-bs-target="#exampleModal"  type="button">Edit</button>
                         </td>
                     </tr>
                     ';
-                 }
+                }
                 ?>
             </tbody>
             <!-- Button trigger modal -->
@@ -75,7 +74,7 @@
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
-                            <h1 class="modal-title fs-5" id="exampleModalLabel">Modal title</h1>
+                            <h1 class="modal-title fs-5" id="exampleModalLabel">Add Employee</h1>
                             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div class="modal-body">
@@ -150,63 +149,77 @@
                                     <img id="image" src="https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg" alt="" width="200px" height="200px" style="border-radius: 50%; ">
                                     <input type="file" name="file" id="file">
                                 </div>
-                                 <div class="modal-footer">
+                                <div class="modal-footer">
                                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" id="upload" class="btn btn-primary">Save changes</button>
+                                    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" id="update">Update</button>
+                                    <button type="button" id="upload" data-bs-dismiss="modal" class="btn btn-primary">Save changes</button>
                                 </div>
                             </form>
                         </div>
-                       
+
                     </div>
                 </div>
             </div>
         </table>
     </div>
 </body>
+
 </html>
 <script>
-   $(document).ready(function(){
-      $('#file').hide(); 
-      $('#image').click(function(){
+    $(document).ready(function () {
+    $('#file').hide();
+    $('#image').click(function () {
         $('#file').click();
-      })
-      $('#file').change(function(){
-        let file=this.files[0];
-        if(file){
-            let img=URL.createObjectURL(file);
-            $('#image').attr('src',img);
+    });
+    $('#file').change(function () {
+        let file = this.files[0];
+        if (file) {
+            let img = URL.createObjectURL(file);
+            $('#image').attr('src', img);
         }
-      })
-      $('#upload').click(function(){
-        let file=$('#file')[0].files[0];
-        let username=$('#username').val();
-        let gender=$('#gender').val();
-        let email=$('#email').val();
-        let phone_number=$('#phone_number').val();
-        let position=$('#position').val();
-        let salary=$('#salary').val();
-        let address=$('#address').val();
+    });
 
-        let formdata= new FormData();
-        formdata.append('file',file);
-        formdata.append('username',username);
-        formdata.append('gender',gender);
-        formdata.append('email',email);
-        formdata.append('phone_number',phone_number);
-        formdata.append('position',position);
-        formdata.append('salary',salary);
-        formdata.append('address',address);
+    // Add Employee
+    $('#add').click(function () {
+        $('#upload').show();
+        $('#update').hide();
+        $('#exampleModalLabel').text('Add Employee');
+        $('#form')[0].reset();
+        $('#image').attr('src',
+            'https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg'
+        );
+    });
+
+    $('#upload').click(function () {
+        let file = $('#file')[0].files[0];
+        let username = $('#username').val();
+        let gender = $('#gender').val();
+        let email = $('#email').val();
+        let phone_number = $('#phone_number').val();
+        let position = $('#position').val();
+        let salary = $('#salary').val();
+        let address = $('#address').val();
+
+        let formdata = new FormData();
+        formdata.append('file', file);
+        formdata.append('username', username);
+        formdata.append('gender', gender);
+        formdata.append('email', email);
+        formdata.append('phone_number', phone_number);
+        formdata.append('position', position);
+        formdata.append('salary', salary);
+        formdata.append('address', address);
 
         $.ajax({
-            url:'insert.php',
-            type:'POST',
-            data:formdata,
-            contentType:false,
-            processData:false,
-            success:function(response){
-                const image=$('#image').attr('src');
+            url: 'insert.php',
+            type: 'POST',
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                const image = $('#image').attr('src');
                 $('tbody').append(`
-                <tr>
+                    <tr>
                         <td>${response}</td>
                         <td>${username}</td>
                         <td>${gender}</td>
@@ -216,35 +229,109 @@
                         <td>${salary}</td>
                         <td>${address}</td>
                         <td><img src="${image}" alt="" width="60px" height="60px"></td>
-                        
                         <td>
-                            <button class="btn btn-danger " id="delete" type="button">Delete</button>
-                            <button class="btn btn-success " type="button">Edit</button>
+                            <button class="btn btn-danger delete" type="button">Delete</button>
+                            <button class="btn btn-success edit" data-bs-toggle="modal" data-bs-target="#exampleModal" type="button">Edit</button>
                         </td>
                     </tr>
-                `)
+                `);
                 $('#form')[0].reset();
-                $('#image').attr('src','https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg')
+                $('#image').attr('src',
+                    'https://www.shutterstock.com/image-vector/user-profile-icon-vector-avatar-600nw-2247726673.jpg'
+                );
             }
-        })
-      })
+        });
+    });
 
-      $(document).on('click','#delete',function(){    
-         let row=$(this).closest('tr');
-         let id=row.find('td:first').text().trim();
-         $.ajax({
-            url:'delete.php',
-            type:'POST',
-            data:{
-                id
-            },
-            success:function(){  
+    // Delete
+    $(document).on('click', '.delete', function () {
+        let row = $(this).closest('tr');
+        let id = row.find('td:first').text().trim();
+        $.ajax({
+            url: 'delete.php',
+            type: 'POST',
+            data: { id },
+            success: function () {
                 row.remove();
             }
-         })
-      })
+        });
+    });
 
+    // Edit
+    $(document).on('click', '.edit', function () {
+        $('#upload').hide();
+        $('#update').show();
+        $('#exampleModalLabel').text('Update Employee');
 
+        let row = $(this).closest('tr');
+        let id = row.find('td:eq(0)').text().trim();
+        let username = row.find('td:eq(1)').text().trim();
+        let gender = row.find('td:eq(2)').text().trim();
+        let email = row.find('td:eq(3)').text().trim();
+        let phone_number = row.find('td:eq(4)').text().trim();
+        let position = row.find('td:eq(5)').text().trim();
+        let salary = row.find('td:eq(6)').text().trim();
+        let address = row.find('td:eq(7)').text().trim();
+        let img = row.find('td:eq(8) img').attr('src');
 
-   })
+        $('#username').val(username);
+        $('#gender').val(gender);
+        $('#email').val(email);
+        $('#phone_number').val(phone_number);
+        $('#position').val(position);
+        $('#salary').val(salary);
+        $('#address').val(address);
+        $('#image').attr('src', img);
+        $('#update').data('id', id);
+    });
+
+    // Update
+    $('#update').click(function () {
+        let id = $(this).data('id'); 
+        let file = $('#file')[0].files[0];
+        let username = $('#username').val();
+        let gender = $('#gender').val();
+        let email = $('#email').val();
+        let phone_number = $('#phone_number').val();
+        let position = $('#position').val();
+        let salary = $('#salary').val();
+        let address = $('#address').val();
+
+        let formdata = new FormData();
+        formdata.append('id', id);
+        formdata.append('file', file);
+        formdata.append('username', username);
+        formdata.append('gender', gender);
+        formdata.append('email', email);
+        formdata.append('phone_number', phone_number);
+        formdata.append('position', position);
+        formdata.append('salary', salary);
+        formdata.append('address', address);
+
+        $.ajax({
+            url: 'update.php',
+            method: 'post',
+            data: formdata,
+            contentType: false,
+            processData: false,
+            success: function (response) {
+                alert(response);
+                $('tbody tr').each(function () {
+                    if ($(this).find('td:eq(0)').text().trim() == id) {
+                        $(this).find('td:eq(1)').text(username);
+                        $(this).find('td:eq(2)').text(gender);
+                        $(this).find('td:eq(3)').text(email);
+                        $(this).find('td:eq(4)').text(phone_number);
+                        $(this).find('td:eq(5)').text(position);
+                        $(this).find('td:eq(6)').text(salary);
+                        $(this).find('td:eq(7)').text(address);
+                        const image = $('#image').attr('src');
+                        $(this).find('td:eq(8) img').attr('src', image);
+                    }
+                });
+            }
+        });
+    });
+});
+
 </script>
